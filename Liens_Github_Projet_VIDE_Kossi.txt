@@ -1,0 +1,37 @@
+========================================================================
+       DÉPÔT DE CODE SOURCE - PROJET DE FIN DE SÉQUENCE M6
+========================================================================
+
+NOM DE L'ÉTUDIANT : VIDE Kossi
+PROJET : Système de Gestion Scolaire Centralisé
+ÉTABLISSEMENT : Complexe Scolaire Privé "L'AVENIR D'OR" (Togo)
+CADRE : Validation du Niveau Approfondi en Développement Web
+
+------------------------------------------------------------------------
+🔗 LIEN DU DÉPÔT GITHUB UNIQUE (Monorepo Laravel / React)
+------------------------------------------------------------------------
+👉 https://github.com/VIDE8/gestion-ecole
+
+------------------------------------------------------------------------
+🔗 LIEN DU DÉPÔT YOUTUBE
+------------------------------------------------------------------------
+👉  https://youtu.be/AcoJTrhWeCw
+
+------------------------------------------------------------------------
+🔑 COMPTES DE TEST POUR LA DÉMONSTRATION
+------------------------------------------------------------------------
+Le mot de passe est unique pour tous les comptes : password
+
+• Profil Administrateur (Directeur) : admin@ecole.tg
+• Profil Comptable                : comptable@ecole.tg
+• Profil Enseignant               : enseignant@ecole.tg
+
+------------------------------------------------------------------------
+📝 LOGIQUE MÉTIER VALORISÉE DANS CE CODE (CUMUL ET MODIFICATIONS)
+------------------------------------------------------------------------
+- Paiement par tranches avec détection et cumul automatique des montants
+  sur le reçu d'origine de l'élève pour bloquer la création de doublons.
+- Intégration de boutons de modification sur des pages dédiées sécurisées
+  pour la correction rapide des reçus financiers et des notes.
+- Sécurisation stricte des accès via un Middleware personnalisé (CheckRole).
+========================================================================

@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\PaiementController;
+use App\Http\Controllers\AnneeScolaireController;
+use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\EleveApiController;
 use Illuminate\Support\Facades\Auth;
@@ -41,15 +43,14 @@ Route::middleware(['auth'])->group(function () {
     // Routes strictes pour les administrateurs
     Route::middleware(['role:admin'])->group(function () {
         Route::post('/classes', [ClasseController::class, 'store'])->name('classes.store');
-    });
 
         Route::get('/annees-scolaires', [AnneeScolaireController::class, 'index'])->name('annees_scolaires.index');
-    Route::post('/annees-scolaires', [AnneeScolaireController::class, 'store'])->name('annees_scolaires.store');
-    Route::post('/annees-scolaires/{id}/activer', [AnneeScolaireController::class, 'activer'])->name('annees_scolaires.activer');
+        Route::post('/annees-scolaires', [AnneeScolaireController::class, 'store'])->name('annees_scolaires.store');
+        Route::post('/annees-scolaires/{id}/activer', [AnneeScolaireController::class, 'activer'])->name('annees_scolaires.activer');
 
-    Route::get('/trimestres', [TrimestreController::class, 'index'])->name('trimestres.index');
-    Route::post('/trimestres', [TrimestreController::class, 'store'])->name('trimestres.store');
-    
+        Route::get('/trimestres', [TrimestreController::class, 'index'])->name('trimestres.index');
+        Route::post('/trimestres', [TrimestreController::class, 'store'])->name('trimestres.store');
+    });
 
     // Routes pour les administrateurs et comptables
     Route::middleware(['role:admin,comptable'])->group(function () {

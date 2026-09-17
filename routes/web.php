@@ -10,8 +10,6 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\EleveApiController;
 use App\Http\Controllers\PresenceController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 
 Route::middleware(['guest'])->group(function () {
@@ -69,38 +67,4 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/eleves/{id}', [EleveApiController::class, 'destroy']);
         });
 
-        // Routes pour la gestion des paiements
-        Route::get('/paiements', [PaiementController::class, 'index'])->name('paiements.index');
-        Route::post('/paiements', [PaiementController::class, 'store'])->name('paiements.store');
-
-        // NOUVELLES ROUTES : Édition et Mise à jour d'un paiement
-        Route::get('/paiements/{id}/edit', [PaiementController::class, 'edit'])->name('paiements.edit');
-        Route::put('/paiements/{id}', [PaiementController::class, 'update'])->name('paiements.update');
-    });
-
-    // Routes pour les administrateurs et enseignants
-    Route::middleware(['role:admin,enseignant'])->group(function () {
-        Route::get('/notes', [NoteController::class, 'index'])->name('notes.index');
-        Route::post('/notes', [NoteController::class, 'store'])->name('notes.store');
-
-        // NOUVELLES ROUTES : Édition et Mise à jour d'une note
-        Route::get('/notes/{id}/edit', [NoteController::class, 'edit'])->name('notes.edit');
-        Route::put('/notes/{id}', [NoteController::class, 'update'])->name('notes.update');
-
-        // Routes pour l'appel (présences) — Phase 3
-        Route::get('/classes/{classe}/appel', [PresenceController::class, 'appel'])->name('presences.appel');
-        Route::post('/classes/{classe}/appel', [PresenceController::class, 'enregistrer'])->name('presences.enregistrer');
-    });
-
-    // ROUTE TEMPORAIRE DE DIAGNOSTIC — à supprimer une fois le problème résolu
-    Route::get('/debug-migrations-temp', function () {
-        return response()->json([
-            'table_presences_existe' => Schema::hasTable('presences'),
-            'table_comportements_existe' => Schema::hasTable('comportements'),
-            'colonne_enseignant_id_existe' => Schema::hasColumn('classes', 'enseignant_id'),
-            'migrations_enregistrees' => DB::table('migrations')
-                ->where('migration', 'like', '%2026_09_17%')
-                ->get(),
-        ]);
-    });
-});
+        // Routes pour la gestion

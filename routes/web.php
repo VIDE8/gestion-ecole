@@ -83,4 +83,65 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/classes/{classe}/comportements', [ComportementController::class, 'index'])->name('comportements.index');
         Route::post('/classes/{classe}/comportements', [ComportementController::class, 'store'])->name('comportements.store');
     });
+
+    // ROUTE TEMPORAIRE — génère notes/présences/comportements pour 10 élèves existants. À supprimer après usage.
+    Route::get('/generer-donnees-temp', function () {
+        $eleves = \App\Models\Eleve::with('classe')->inRandomOrder()->take(10)->get();
+
+        $matieres = ['Calcul écrit / Opérations', 'Calcul mental', 'Lecture', 'Dictée', 'Étude'];
+        $typesComportement = ['incident', 'appreciation', 'sanction'];
+        $descriptions = [
+            'incident' => 'Bavardage répété pendant le cours.',
+            'appreciation' => 'Très bonne participation en classe.',
+            'sanction' => 'Retard non justifié de 30 minutes.',
+        ];
+
+        $resultat = ['notes' => 0, 'presences' => 0, 'comportements' => 0];
+
+        foreach ($eleves as $eleve) {
+            if (!$eleve->classe) {
+                continue;
+            }
+            $enseignantId = $eleve->classe->enseignant_id;
+
+            // 2 à 3 notes par élève
+            foreach (array_rand($matieres, rand(2, 3)) as $index) {
+                \App\Models\Note::create([
+                    'eleve_id' => $eleve->id,
+                    'matiere' => is_array($index) ? $matieres[$index[0]] : $matieres[$index],
+                    'valeur' => rand(5, 20),
+                ]);
+                $resultat['notes']++;
+            }
+
+            // Présences sur les 5 derniers jours
+            for ($j = 0; $j < 5; $j++) {
+                $statut = collect(['present', 'present', 'present', 'absent', 'retard'])->random();
+                \App\Models\Presence::updateOrCreate(
+                    ['eleve_id' => $eleve->id, 'date' => now()->subDays($j)->toDateString()],
+                    [
+                        'classe_id' => $eleve->classes_id,
+                        'statut' => $statut,
+                        'justifie' => false,
+                        'enregistre_par' => $enseignantId,
+                    ]
+                );
+                $resultat['presences']++;
+            }
+
+            // 1 comportement par élève
+            $type = $typesComportement[array_rand($typesComportement)];
+            \App\Models\Comportement::create([
+                'eleve_id' => $eleve->id,
+                'classe_id' => $eleve->classes_id,
+                'date' => now()->subDays(rand(0, 4))->toDateString(),
+                'type' => $type,
+                'description' => $descriptions[$type],
+                'enregistre_par' => $enseignantId,
+            ]);
+            $resultat['comportements']++;
+        }
+
+        return response()->json($resultat);
+    });
 });

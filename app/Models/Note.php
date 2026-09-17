@@ -9,10 +9,15 @@ class Note extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['valeur', 'matiere', 'eleve_id'];
+    protected $fillable = ['valeur', 'matiere', 'eleve_id', 'trimestre_id'];
 
     public function eleve()
     {
         return $this->belongsTo(Eleve::class);
+    }
+
+    public function trimestre()
+    {
+        return $this->belongsTo(Trimestre::class);
     }
 }

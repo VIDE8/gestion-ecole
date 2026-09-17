@@ -1,4 +1,4 @@
-            <?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClasseController;
@@ -82,5 +82,56 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/classes/{classe}/comportements', [ComportementController::class, 'index'])->name('comportements.index');
         Route::post('/classes/{classe}/comportements', [ComportementController::class, 'store'])->name('comportements.store');
+    });
+
+    // ROUTE TEMPORAIRE — génère 100 élèves répartis aléatoirement dans les classes. À supprimer après usage.
+    Route::get('/generer-eleves-temp', function () {
+        $prenomsGarcons = ['Kossi', 'Kodjo', 'Komlan', 'Yao', 'Ayité', 'Edem', 'Mawuli', 'Sena', 'Kwami', 'Fiifi', 'Amevi', 'Dela'];
+        $prenomsFilles = ['Ama', 'Akpene', 'Afi', 'Abra', 'Kafui', 'Sedem', 'Elom', 'Mawuena', 'Delali', 'Enam', 'Dede', 'Selom'];
+        $noms = ['Agbeko', 'Amouzou', 'Adjei', 'Kponou', 'Tsevi', 'Adzo', 'Bakoubaye', 'Gnassingbé', 'Djidonou', 'Kokou', 'Amegnran', 'Sossou', 'Tchamie', 'Fiawoo', 'Aziaka', 'Dogbe', 'Klutse', 'Ametowobla', 'Toundoh', 'Amewou'];
+
+        $classes = \App\Models\Classe::all();
+
+        $agesParNiveau = [
+            'CP1' => [6, 7],
+            'CP2' => [7, 8],
+            'CE1' => [8, 9],
+            'CE2' => [9, 10],
+            'CM1' => [10, 11],
+            'CM2' => [11, 12],
+        ];
+
+        $dernierMatricule = \App\Models\Eleve::where('matricule', 'like', '2026-EP-%')
+            ->orderByDesc('matricule')
+            ->value('matricule');
+        $prochainNumero = $dernierMatricule ? ((int) substr($dernierMatricule, -3)) + 1 : 1;
+
+        $crees = [];
+
+        for ($i = 0; $i < 100; $i++) {
+            $classe = $classes->random();
+            $estGarcon = rand(0, 1) === 1;
+            $prenom = $estGarcon ? $prenomsGarcons[array_rand($prenomsGarcons)] : $prenomsFilles[array_rand($prenomsFilles)];
+            $nom = $noms[array_rand($noms)];
+
+            $tranche = $agesParNiveau[$classe->niveau] ?? [7, 10];
+            $age = rand($tranche[0], $tranche[1]);
+            $dateNaissance = now()->subYears($age)->subDays(rand(0, 364))->format('Y-m-d');
+
+            $matricule = '2026-EP-' . str_pad($prochainNumero, 3, '0', STR_PAD_LEFT);
+            $prochainNumero++;
+
+            $eleve = \App\Models\Eleve::create([
+                'nom' => $nom,
+                'prenom' => $prenom,
+                'date_naissance' => $dateNaissance,
+                'matricule' => $matricule,
+                'classes_id' => $classe->id,
+            ]);
+
+            $crees[] = ['matricule' => $eleve->matricule, 'nom' => $eleve->nom, 'prenom' => $eleve->prenom, 'classe' => $classe->nom_classe . ' ' . $classe->niveau];
+        }
+
+        return response()->json(['total_crees' => count($crees), 'exemples' => array_slice($crees, 0, 10)]);
     });
 });

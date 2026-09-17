@@ -25,6 +25,13 @@
 
 <body>
     <div id="app">
+        @php
+            $mesClasses = collect();
+            if (auth()->check() && auth()->user()->hasRole('enseignant')) {
+                $mesClasses = \App\Models\Classe::where('enseignant_id', auth()->id())->get();
+            }
+        @endphp
+
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm py-3 mb-4">
             <div class="container">
                 <a class="navbar-brand fw-bold text-success" href="{{ url('/') }}">
@@ -36,12 +43,34 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item me-3">
-                            <a class="nav-link fw-bold text-success" href="{{ route('home') }}">Gestion des Classes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fw-bold text-primary" href="{{ route('eleves.index') }}">Registre des Élèves</a>
-                        </li>
+                        @auth
+                            @if(auth()->user()->hasRole('admin'))
+                                <li class="nav-item me-3">
+                                    <a class="nav-link fw-bold text-success" href="{{ route('home') }}">Gestion des Classes</a>
+                                </li>
+                            @endif
+
+                            @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('comptable'))
+                                <li class="nav-item me-3">
+                                    <a class="nav-link fw-bold text-primary" href="{{ route('eleves.index') }}">Registre des Élèves</a>
+                                </li>
+                            @endif
+
+                            @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('enseignant'))
+                                <li class="nav-item me-3">
+                                    <a class="nav-link fw-bold text-info" href="{{ route('notes.index') }}">Notes</a>
+                                </li>
+                            @endif
+
+                            @foreach($mesClasses as $classe)
+                                <li class="nav-item me-3">
+                                    <a class="nav-link fw-bold text-warning" href="{{ route('presences.appel', $classe) }}">Appel</a>
+                                </li>
+                                <li class="nav-item me-3">
+                                    <a class="nav-link fw-bold text-danger" href="{{ route('comportements.index', $classe) }}">Comportement</a>
+                                </li>
+                            @endforeach
+                        @endauth
                     </ul>
                 </div>
             </div>

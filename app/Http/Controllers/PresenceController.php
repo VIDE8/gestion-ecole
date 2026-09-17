@@ -47,7 +47,7 @@ class PresenceController extends Controller
 
     private function authorizeClasse(Classe $classe)
     {
-        if (auth()->user()->role === 'enseignant' && $classe->enseignant_id !== auth()->id()) {
+        if (auth()->user()->hasRole('enseignant') && $classe->enseignant_id !== auth()->id()) {
             abort(403, "Vous n'êtes pas titulaire de cette classe.");
         }
     }

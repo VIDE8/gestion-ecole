@@ -8,6 +8,7 @@ use App\Http\Controllers\AnneeScolaireController;
 use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\EleveApiController;
+use App\Http\Controllers\PresenceController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -83,5 +84,9 @@ Route::middleware(['auth'])->group(function () {
         // NOUVELLES ROUTES : Édition et Mise à jour d'une note
         Route::get('/notes/{id}/edit', [NoteController::class, 'edit'])->name('notes.edit');
         Route::put('/notes/{id}', [NoteController::class, 'update'])->name('notes.update');
+
+        // Routes pour l'appel (présences) — Phase 3
+        Route::get('/classes/{classe}/appel', [PresenceController::class, 'appel'])->name('presences.appel');
+        Route::post('/classes/{classe}/appel', [PresenceController::class, 'enregistrer'])->name('presences.enregistrer');
     });
 });

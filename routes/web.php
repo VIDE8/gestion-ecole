@@ -93,11 +93,7 @@ Route::middleware(['auth'])->group(function () {
     // ROUTE TEMPORAIRE DE DIAGNOSTIC — à supprimer une fois le problème résolu
     Route::get('/debug-classes-enseignants-temp', function () {
         return response()->json([
-            'classes' => \App\Models\Classe::select('id', 'nom_classe', 'enseignant_id')->get(),
-            'enseignants' => \App\Models\User::where('role', 'enseignant')
-                ->orWhere('email', 'like', '%enseignant%')
-                ->select('id', 'name', 'email', 'role')
-                ->get(),
+            'classes' => \App\Models\Classe::select('id', 'nom_classe', 'niveau', 'enseignant_id')->get(),
         ]);
     });
 });

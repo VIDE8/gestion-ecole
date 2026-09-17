@@ -90,10 +90,34 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/classes/{classe}/appel', [PresenceController::class, 'enregistrer'])->name('presences.enregistrer');
     });
 
-    // ROUTE TEMPORAIRE DE DIAGNOSTIC — à supprimer une fois le problème résolu
-    Route::get('/debug-classes-enseignants-temp', function () {
-        return response()->json([
-            'classes' => \App\Models\Classe::select('id', 'nom_classe', 'niveau', 'enseignant_id')->get(),
-        ]);
+    // ROUTE TEMPORAIRE — crée un compte enseignant par classe et l'assigne. À supprimer après usage.
+    Route::get('/setup-enseignants-temp', function () {
+        $classes = \App\Models\Classe::orderBy('id')->get();
+        $resultat = [];
+
+        foreach ($classes as $classe) {
+            $emailSlug = strtolower($classe->niveau) . '.' . strtolower(str_replace('Groupe ', '', $classe->nom_classe));
+            $email = "enseignant.{$emailSlug}@ecole.tg";
+
+            $enseignant = \App\Models\User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => "Enseignant {$classe->niveau} ({$classe->nom_classe})",
+                    'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                    'role' => 'enseignant',
+                ]
+            );
+
+            $classe->enseignant_id = $enseignant->id;
+            $classe->save();
+
+            $resultat[] = [
+                'classe' => "{$classe->niveau} - {$classe->nom_classe}",
+                'enseignant_email' => $enseignant->email,
+                'mot_de_passe' => 'password',
+            ];
+        }
+
+        return response()->json($resultat);
     });
 });

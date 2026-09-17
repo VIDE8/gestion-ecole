@@ -9,6 +9,7 @@ use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\EleveApiController;
 use App\Http\Controllers\PresenceController;
+use App\Http\Controllers\ComportementController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -88,16 +89,5 @@ Route::middleware(['auth'])->group(function () {
         // Routes pour l'appel (présences) — Phase 3
         Route::get('/classes/{classe}/appel', [PresenceController::class, 'appel'])->name('presences.appel');
         Route::post('/classes/{classe}/appel', [PresenceController::class, 'enregistrer'])->name('presences.enregistrer');
-    });
 
-    // ROUTE TEMPORAIRE — lit les 100 dernières lignes du log Laravel. À supprimer après usage.
-    Route::get('/voir-erreur-temp', function () {
-        $chemin = storage_path('logs/laravel.log');
-        if (!file_exists($chemin)) {
-            return "Aucun fichier de log trouvé.";
-        }
-        $lignes = file($chemin);
-        $dernieresLignes = array_slice($lignes, -100);
-        return response('<pre>' . htmlspecialchars(implode('', $dernieresLignes)) . '</pre>');
-    });
-});
+        // Routes pour le suivi du comportement — Phas

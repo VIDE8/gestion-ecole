@@ -10,6 +10,8 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\EleveApiController;
 use App\Http\Controllers\PresenceController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 
 Route::middleware(['guest'])->group(function () {
@@ -88,5 +90,17 @@ Route::middleware(['auth'])->group(function () {
         // Routes pour l'appel (présences) — Phase 3
         Route::get('/classes/{classe}/appel', [PresenceController::class, 'appel'])->name('presences.appel');
         Route::post('/classes/{classe}/appel', [PresenceController::class, 'enregistrer'])->name('presences.enregistrer');
+    });
+
+    // ROUTE TEMPORAIRE DE DIAGNOSTIC — à supprimer une fois le problème résolu
+    Route::get('/debug-migrations-temp', function () {
+        return response()->json([
+            'table_presences_existe' => Schema::hasTable('presences'),
+            'table_comportements_existe' => Schema::hasTable('comportements'),
+            'colonne_enseignant_id_existe' => Schema::hasColumn('classes', 'enseignant_id'),
+            'migrations_enregistrees' => DB::table('migrations')
+                ->where('migration', 'like', '%2026_09_17%')
+                ->get(),
+        ]);
     });
 });

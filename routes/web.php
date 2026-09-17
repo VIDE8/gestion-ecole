@@ -1,4 +1,4 @@
-<?php
+            <?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClasseController;
@@ -12,7 +12,6 @@ use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\ComportementController;
 use Illuminate\Support\Facades\Auth;
 
-
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -22,7 +21,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // ROUTE RACINE : Redirige dynamiquement ou affiche la page selon le rôle
     Route::get('/', function () {
         /** @var \App\Models\User $user */
         $user = Auth::user();
@@ -42,7 +40,6 @@ Route::middleware(['auth'])->group(function () {
         abort(403, 'Action non autorisée pour votre profil.');
     })->name('home');
 
-    // Routes strictes pour les administrateurs
     Route::middleware(['role:admin'])->group(function () {
         Route::post('/classes', [ClasseController::class, 'store'])->name('classes.store');
 
@@ -54,9 +51,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/trimestres', [TrimestreController::class, 'store'])->name('trimestres.store');
     });
 
-    // Routes pour les administrateurs et comptables
     Route::middleware(['role:admin,comptable'])->group(function () {
-        // Registre des Élèves : servi entièrement par React (voir resources/js/react/EleveApp.jsx)
         Route::get('/eleves', function () {
             return view('eleves.react');
         })->name('eleves.index');
@@ -68,26 +63,24 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/eleves/{id}', [EleveApiController::class, 'destroy']);
         });
 
-        // Routes pour la gestion des paiements
         Route::get('/paiements', [PaiementController::class, 'index'])->name('paiements.index');
         Route::post('/paiements', [PaiementController::class, 'store'])->name('paiements.store');
 
-        // NOUVELLES ROUTES : Édition et Mise à jour d'un paiement
         Route::get('/paiements/{id}/edit', [PaiementController::class, 'edit'])->name('paiements.edit');
         Route::put('/paiements/{id}', [PaiementController::class, 'update'])->name('paiements.update');
     });
 
-    // Routes pour les administrateurs et enseignants
     Route::middleware(['role:admin,enseignant'])->group(function () {
         Route::get('/notes', [NoteController::class, 'index'])->name('notes.index');
         Route::post('/notes', [NoteController::class, 'store'])->name('notes.store');
 
-        // NOUVELLES ROUTES : Édition et Mise à jour d'une note
         Route::get('/notes/{id}/edit', [NoteController::class, 'edit'])->name('notes.edit');
         Route::put('/notes/{id}', [NoteController::class, 'update'])->name('notes.update');
 
-        // Routes pour l'appel (présences) — Phase 3
         Route::get('/classes/{classe}/appel', [PresenceController::class, 'appel'])->name('presences.appel');
         Route::post('/classes/{classe}/appel', [PresenceController::class, 'enregistrer'])->name('presences.enregistrer');
 
-        // Routes pour le suivi du comportement — Phas
+        Route::get('/classes/{classe}/comportements', [ComportementController::class, 'index'])->name('comportements.index');
+        Route::post('/classes/{classe}/comportements', [ComportementController::class, 'store'])->name('comportements.store');
+    });
+});

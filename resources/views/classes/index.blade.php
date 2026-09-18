@@ -44,27 +44,36 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">
                             <thead class="table-light">
-                                <tr>
-                                    <th>Niveau</th>
-                                    <th>Nom / Section</th>
-                                    <th class="text-end">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($classes as $classe)
-                                <tr>
-                                    <td><span class="badge bg-primary text-white px-2 py-1">{{ $classe->niveau }}</span></td>
-                                    <td class="fw-bold">{{ $classe->nom_classe }}</td>
-                                    <td class="text-end">
-                                        <a href="{{ url('/eleves?classe_id=' . $classe->id) }}" class="btn btn-sm btn-outline-secondary">Voir Élèves</a>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="3" class="text-center text-muted small py-4">Aucune classe pour le moment.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
+    <tr>
+        <th>Niveau</th>
+        <th>Nom / Section</th>
+        <th>Enseignant</th>
+        <th class="text-end">Actions</th>
+    </tr>
+</thead>
+<tbody>
+    @forelse($classes as $classe)
+    <tr>
+        <td><span class="badge bg-primary text-white px-2 py-1">{{ $classe->niveau }}</span></td>
+        <td class="fw-bold">{{ $classe->nom_classe }}</td>
+        <td>
+            @if($classe->enseignant)
+                {{ $classe->enseignant->name }}
+            @else
+                <span class="text-muted small fst-italic">Non assigné</span>
+            @endif
+        </td>
+        <td class="text-end">
+            <a href="{{ url('/eleves?classe_id=' . $classe->id) }}" class="btn btn-sm btn-outline-secondary">Voir Élèves</a>
+            <a href="{{ route('classes.edit', $classe->id) }}" class="btn btn-sm btn-outline-success">Modifier</a>
+        </td>
+    </tr>
+    @empty
+    <tr>
+        <td colspan="4" class="text-center text-muted small py-4">Aucune classe pour le moment.</td>
+    </tr>
+    @endforelse
+</tbody>
                         </table>
                     </div>
                 </div>

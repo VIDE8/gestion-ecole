@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\EleveApiController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\ComportementController;
+use App\Models\Classe;
 use Illuminate\Support\Facades\Auth;
 
 Route::middleware(['guest'])->group(function () {
@@ -81,6 +82,17 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/notes/{id}/edit', [NoteController::class, 'edit'])->name('notes.edit');
         Route::put('/notes/{id}', [NoteController::class, 'update'])->name('notes.update');
+
+        // Retrouve automatiquement la classe dont l'enseignant est titulaire
+        Route::get('/ma-classe/appel', function () {
+            $classe = Classe::where('enseignant_id', auth()->id())->firstOrFail();
+            return redirect()->route('presences.appel', $classe);
+        })->name('presences.ma_classe');
+
+        Route::get('/ma-classe/comportements', function () {
+            $classe = Classe::where('enseignant_id', auth()->id())->firstOrFail();
+            return redirect()->route('comportements.index', $classe);
+        })->name('comportements.ma_classe');
     });
 
     Route::middleware(['role:admin,enseignant'])->group(function () {

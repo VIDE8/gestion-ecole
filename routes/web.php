@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['role:admin'])->group(function () {
         Route::post('/classes', [ClasseController::class, 'store'])->name('classes.store');
+        Route::get('/classes/{classe}/edit', [ClasseController::class, 'edit'])->name('classes.edit');
+        Route::put('/classes/{classe}', [ClasseController::class, 'update'])->name('classes.update');
 
         Route::get('/annees-scolaires', [AnneeScolaireController::class, 'index'])->name('annees_scolaires.index');
         Route::post('/annees-scolaires', [AnneeScolaireController::class, 'store'])->name('annees_scolaires.store');

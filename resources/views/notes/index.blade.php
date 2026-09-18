@@ -28,8 +28,20 @@
                     <a class="nav-link {{ Request::is('paiements') ? 'active text-danger' : '' }} fw-bold me-3" href="{{ url('/paiements') }}">Comptabilité / Paiements</a>
                     @endif
 
-                    @if(in_array(auth()->user()->role, ['admin', 'enseignant']))
+                    @if(auth()->user()->role === 'enseignant')
                     <a class="nav-link {{ Request::is('notes') ? 'active text-warning' : '' }} fw-bold me-3" href="{{ url('/notes') }}">Saisie des Notes</a>
+                    @endif
+
+                    {{-- Comportement : admin voit tous les élèves, enseignant voit sa classe --}}
+                    @if(auth()->user()->role === 'admin')
+                    <a class="nav-link {{ Request::is('comportements') ? 'active text-info' : '' }} fw-bold me-3" href="{{ route('comportements.index_global') }}">Comportement</a>
+                    @elseif(auth()->user()->role === 'enseignant')
+                    <a class="nav-link {{ Request::is('classes/*/comportements') ? 'active text-info' : '' }} fw-bold me-3" href="{{ route('comportements.ma_classe') }}">Comportement</a>
+                    @endif
+
+                    {{-- Présence : uniquement l'enseignant de sa classe --}}
+                    @if(auth()->user()->role === 'enseignant')
+                    <a class="nav-link {{ Request::is('classes/*/appel') ? 'active text-success' : '' }} fw-bold me-3" href="{{ route('presences.ma_classe') }}">Présence / Appel</a>
                     @endif
                 </div>
 
@@ -117,7 +129,7 @@
                                         <th>Matière</th>
                                         <th>Note / 20</th>
                                         <th>Appréciation</th>
-                                        <th class="text-end">Actions</th> <!-- BIEN VÉRIFIER CETTE LIGNE -->
+                                        <th class="text-end">Actions</th>
                                     </tr>
                                 </thead>
 
@@ -127,7 +139,6 @@
                                         <td class="fw-bold text-uppercase">{{ $note->eleve->nom }} <span class="text-capitalize fw-normal">{{ $note->eleve->prenom }}</span> <br> <small class="text-muted">{{ $note->eleve->matricule }}</small></td>
                                         <td><span class="badge bg-secondary text-white px-2 py-1">{{ $note->eleve->classe->niveau ?? 'N/A' }}</span></td>
                                         <td>{{ $note->matiere }}</td>
-                                        <!-- Modification dynamique de la couleur de la note selon la moyenne -->
                                         <td class="fw-bold {{ $note->valeur >= 10 ? 'text-success' : 'text-danger' }}">{{ number_format($note->valeur, 2, ',', ' ') }} / 20</td>
                                         <td>
                                             @if($note->valeur >= 16)
@@ -142,7 +153,6 @@
                                             <span class="text-danger small fw-bold">Insuffisant</span>
                                             @endif
                                         </td>
-                                        <!-- Bouton Modifier ajouté à droite -->
                                         <td class="text-end">
                                             <a href="{{ route('notes.edit', $note->id) }}" class="btn btn-sm btn-warning fw-bold px-3">
                                                 Modifier

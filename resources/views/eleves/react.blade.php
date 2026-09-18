@@ -27,10 +27,18 @@
 
                     @if(in_array(auth()->user()->role, ['admin', 'comptable']))
                     <a class="nav-link active text-primary fw-bold me-3" href="{{ url('/eleves') }}">Registre des Élèves</a>
-                    <a class="nav-link fw-bold me-3" href="{{ url('/paiements') }}">Comptabilité / Paiements</a> @endif
+                    @endif
 
-                    @if(in_array(auth()->user()->role, ['admin', 'enseignant']))
+                    @if(auth()->user()->role === 'comptable')
+                    <a class="nav-link fw-bold me-3" href="{{ url('/paiements') }}">Comptabilité / Paiements</a>
+                    @endif
+
+                    @if(auth()->user()->role === 'enseignant')
                     <a class="nav-link fw-bold me-3" href="{{ url('/notes') }}">Saisie des Notes</a>
+                    @endif
+
+                    @if(auth()->user()->role === 'admin')
+                    <a class="nav-link fw-bold me-3" href="{{ url('/comportements') }}">Comportement</a>
                     @endif
                 </div>
 

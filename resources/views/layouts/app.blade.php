@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>École Primaire</title>
+    <title>@yield('title', 'École Primaire')</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +21,8 @@
             background-color: #f8f9fa;
         }
     </style>
+
+    @yield('head')
 </head>
 
 <body>
@@ -56,6 +58,12 @@
                                 </li>
                             @endif
 
+                            @if(auth()->user()->hasRole('comptable'))
+                                <li class="nav-item me-3">
+                                    <a class="nav-link fw-bold text-danger" href="{{ route('paiements.index') }}">Comptabilité / Paiements</a>
+                                </li>
+                            @endif
+
                             @if(auth()->user()->hasRole('enseignant'))
                                 <li class="nav-item me-3">
                                     <a class="nav-link fw-bold text-info" href="{{ route('notes.index') }}">Notes</a>
@@ -76,6 +84,16 @@
                                     <a class="nav-link fw-bold text-danger" href="{{ route('comportements.index', $classe) }}">Comportement</a>
                                 </li>
                             @endforeach
+
+                            <li class="nav-item me-3">
+                                <span class="nav-link text-muted small">{{ auth()->user()->name }} ({{ strtoupper(auth()->user()->role) }})</span>
+                            </li>
+                            <li class="nav-item">
+                                <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Déconnexion</button>
+                                </form>
+                            </li>
                         @endauth
                     </ul>
                 </div>
@@ -89,6 +107,8 @@
 
     <!-- Bootstrap 5 JavaScript CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    @yield('scripts')
 </body>
 
 </html>

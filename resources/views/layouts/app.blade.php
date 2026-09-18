@@ -74,6 +74,12 @@
                                 <li class="nav-item me-3">
                                     <a class="nav-link fw-bold text-danger" href="{{ route('comportements.index_global') }}">Comportement</a>
                                 </li>
+                                <li class="nav-item me-3">
+                                    <a class="nav-link fw-bold text-secondary" href="{{ route('annees_scolaires.index') }}">Années Scolaires</a>
+                                </li>
+                                <li class="nav-item me-3">
+                                    <a class="nav-link fw-bold text-secondary" href="{{ route('trimestres.index') }}">Trimestres</a>
+                                </li>
                             @endif
 
                             @foreach($mesClasses as $classe)

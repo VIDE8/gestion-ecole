@@ -1,114 +1,92 @@
-<?php
+@extends('layouts.app')
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ClasseController;
-use App\Http\Controllers\NoteController;
-use App\Http\Controllers\PaiementController;
-use App\Http\Controllers\AnneeScolaireController;
-use App\Http\Controllers\TrimestreController;
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Api\EleveApiController;
-use App\Http\Controllers\PresenceController;
-use App\Http\Controllers\ComportementController;
-use App\Models\Classe;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+@section('content')
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Comportement — {{ $classe->nom_classe }}</h3>
+        <a href="{{ route('home') }}" class="btn btn-outline-secondary btn-sm">&larr; Retour</a>
+    </div>
 
-// --- DEBUG TEMPORAIRE : à retirer après vérification ---
-Route::get('/debug-user/{email}', function ($email) {
-    return User::where('email', $email)->first(['id', 'name', 'email', 'role']);
-});
-// --- FIN DEBUG ---
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-Route::middleware(['guest'])->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-});
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-Route::middleware(['auth'])->group(function () {
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Nouvel enregistrement</h5>
+            <form action="{{ route('comportements.store', $classe) }}" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label">Élève</label>
+                    <select name="eleve_id" class="form-select" required>
+                        <option value="" disabled selected>-- Choisir un élève --</option>
+                        @foreach($eleves as $eleve)
+                            <option value="{{ $eleve->id }}">{{ $eleve->nom }} {{ $eleve->prenom }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+                <div class="mb-3">
+                    <label class="form-label">Type</label>
+                    <select name="type" class="form-select" required>
+                        <option value="incident">Incident</option>
+                        <option value="appreciation">Appréciation</option>
+                        <option value="sanction">Sanction</option>
+                    </select>
+                </div>
 
-    Route::get('/', function () {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="3" required></textarea>
+                </div>
 
-        if ($user && $user->hasRole('admin')) {
-            return app(ClasseController::class)->index();
-        }
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </form>
+        </div>
+    </div>
 
-        if ($user && $user->hasRole('comptable')) {
-            return redirect()->route('eleves.index');
-        }
-
-        if ($user && $user->hasRole('enseignant')) {
-            return redirect()->route('notes.index');
-        }
-
-        abort(403, 'Action non autorisée pour votre profil.');
-    })->name('home');
-
-    Route::middleware(['role:admin'])->group(function () {
-        Route::post('/classes', [ClasseController::class, 'store'])->name('classes.store');
-        Route::get('/classes/{classe}/edit', [ClasseController::class, 'edit'])->name('classes.edit');
-        Route::put('/classes/{classe}', [ClasseController::class, 'update'])->name('classes.update');
-
-        Route::get('/annees-scolaires', [AnneeScolaireController::class, 'index'])->name('annees_scolaires.index');
-        Route::post('/annees-scolaires', [AnneeScolaireController::class, 'store'])->name('annees_scolaires.store');
-        Route::post('/annees-scolaires/{id}/activer', [AnneeScolaireController::class, 'activer'])->name('annees_scolaires.activer');
-
-        Route::get('/trimestres', [TrimestreController::class, 'index'])->name('trimestres.index');
-        Route::post('/trimestres', [TrimestreController::class, 'store'])->name('trimestres.store');
-
-        Route::get('/comportements', [ComportementController::class, 'indexGlobal'])->name('comportements.index_global');
-        Route::post('/comportements', [ComportementController::class, 'storeGlobal'])->name('comportements.store_global');
-    });
-
-    Route::middleware(['role:admin,comptable'])->group(function () {
-        Route::get('/eleves', function () {
-            return view('eleves.react');
-        })->name('eleves.index');
-
-        Route::prefix('api')->group(function () {
-            Route::get('/eleves', [EleveApiController::class, 'index']);
-            Route::post('/eleves', [EleveApiController::class, 'store']);
-            Route::put('/eleves/{id}', [EleveApiController::class, 'update']);
-            Route::delete('/eleves/{id}', [EleveApiController::class, 'destroy']);
-        });
-    });
-
-    Route::middleware(['role:comptable'])->group(function () {
-        Route::get('/paiements', [PaiementController::class, 'index'])->name('paiements.index');
-        Route::post('/paiements', [PaiementController::class, 'store'])->name('paiements.store');
-
-        Route::get('/paiements/{id}/edit', [PaiementController::class, 'edit'])->name('paiements.edit');
-        Route::put('/paiements/{id}', [PaiementController::class, 'update'])->name('paiements.update');
-    });
-
-    Route::middleware(['role:enseignant'])->group(function () {
-        Route::get('/notes', [NoteController::class, 'index'])->name('notes.index');
-        Route::post('/notes', [NoteController::class, 'store'])->name('notes.store');
-
-        Route::get('/notes/{id}/edit', [NoteController::class, 'edit'])->name('notes.edit');
-        Route::put('/notes/{id}', [NoteController::class, 'update'])->name('notes.update');
-
-        // Retrouve automatiquement la classe dont l'enseignant est titulaire
-        Route::get('/ma-classe/appel', function () {
-            $classe = Classe::where('enseignant_id', auth()->id())->firstOrFail();
-            return redirect()->route('presences.appel', $classe);
-        })->name('presences.ma_classe');
-
-        Route::get('/ma-classe/comportements', function () {
-            $classe = Classe::where('enseignant_id', auth()->id())->firstOrFail();
-            return redirect()->route('comportements.index', $classe);
-        })->name('comportements.ma_classe');
-    });
-
-    Route::middleware(['role:admin,enseignant'])->group(function () {
-        Route::get('/classes/{classe}/appel', [PresenceController::class, 'appel'])->name('presences.appel');
-        Route::post('/classes/{classe}/appel', [PresenceController::class, 'enregistrer'])->name('presences.enregistrer');
-
-        Route::get('/classes/{classe}/comportements', [ComportementController::class, 'index'])->name('comportements.index');
-        Route::post('/classes/{classe}/comportements', [ComportementController::class, 'store'])->name('comportements.store');
-    });
-});
+    <h5>Historique</h5>
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Date</th>
+                <th>Élève</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($comportements as $c)
+                <tr>
+                    <td>{{ \Carbon\Carbon::parse($c->date)->format('d/m/Y') }}</td>
+                    <td>{{ $c->eleve->nom ?? '—' }} {{ $c->eleve->prenom ?? '' }}</td>
+                    <td>
+                        @if($c->type === 'incident')
+                            <span class="badge bg-danger">Incident</span>
+                        @elseif($c->type === 'appreciation')
+                            <span class="badge bg-success">Appréciation</span>
+                        @else
+                            <span class="badge bg-warning text-dark">Sanction</span>
+                        @endif
+                    </td>
+                    <td>{{ $c->description }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="4" class="text-center text-muted">Aucun enregistrement pour cette classe.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+@endsection

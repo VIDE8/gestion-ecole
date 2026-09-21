@@ -45,6 +45,29 @@ class PresenceController extends Controller
         return back()->with('success', "Appel enregistré.");
     }
 
+    public function statistiquesClasse(Classe $classe)
+    {
+        $this->authorizeClasse($classe);
+
+        $eleves = $classe->eleves()->orderBy('nom')->get();
+
+        $stats = Presence::where('classe_id', $classe->id)
+            ->selectRaw('eleve_id,
+                SUM(CASE WHEN statut = "absent" THEN 1 ELSE 0 END) as nb_absences,
+                SUM(CASE WHEN statut = "retard" THEN 1 ELSE 0 END) as nb_retards')
+            ->groupBy('eleve_id')
+            ->get()
+            ->keyBy('eleve_id');
+
+        return view('presences.statistiques', compact('classe', 'eleves', 'stats'));
+    }
+
+    public function choisirClasse()
+    {
+        $classes = Classe::all();
+        return view('presences.statistiques_index', compact('classes'));
+    }
+
     private function authorizeClasse(Classe $classe)
     {
         if (auth()->user()->hasRole('enseignant') && $classe->enseignant_id !== auth()->id()) {

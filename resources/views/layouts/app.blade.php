@@ -20,6 +20,7 @@
             font-family: 'Nunito', sans-serif;
             background-color: #f8f9fa;
         }
+        .text-violet { color: #6f42c1 !important; }
     </style>
 
     @yield('head')
@@ -63,7 +64,7 @@
                                     <a class="nav-link fw-bold text-danger" href="{{ route('paiements.index') }}">Comptabilité / Paiements</a>
                                 </li>
                                 <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-danger" href="{{ route('depenses.index') }}">Dépenses</a>
+                                    <a class="nav-link fw-bold text-violet" href="{{ route('depenses.index') }}">Dépenses</a>
                                 </li>
                             @endif
 

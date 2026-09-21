@@ -14,7 +14,10 @@ return new class extends Migration
             $table->string('beneficiaire');
             $table->decimal('montant', 12, 2);
             $table->date('date_depense');
-            $table->foreignId('enregistre_par')->constrained('users');
+            $table->foreignId('enregistre_par')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
             $table->timestamps();
         });
     }

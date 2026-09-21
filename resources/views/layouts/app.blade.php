@@ -62,6 +62,9 @@
                                 <li class="nav-item me-3">
                                     <a class="nav-link fw-bold text-danger" href="{{ route('paiements.index') }}">Comptabilité / Paiements</a>
                                 </li>
+                                <li class="nav-item me-3">
+                                    <a class="nav-link fw-bold text-danger" href="{{ route('depenses.index') }}">Dépenses</a>
+                                </li>
                             @endif
 
                             @if(auth()->user()->hasRole('enseignant'))

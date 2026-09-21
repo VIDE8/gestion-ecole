@@ -14,12 +14,6 @@ use App\Models\Classe;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-// --- DEBUG TEMPORAIRE : à retirer après vérification ---
-Route::get('/debug-user/{email}', function ($email) {
-    return User::where('email', $email)->first(['id', 'name', 'email', 'role']);
-});
-// --- FIN DEBUG ---
-
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);

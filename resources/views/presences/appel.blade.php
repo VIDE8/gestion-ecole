@@ -4,7 +4,10 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>Appel — {{ $classe->nom_classe }} <small class="text-muted">({{ now()->format('d/m/Y') }})</small></h3>
-        <a href="{{ route('home') }}" class="btn btn-outline-secondary btn-sm">&larr; Retour</a>
+        <div>
+            <a href="{{ route('presences.statistiques', $classe) }}" class="btn btn-outline-primary btn-sm">Statistiques</a>
+            <a href="{{ route('home') }}" class="btn btn-outline-secondary btn-sm">&larr; Retour</a>
+        </div>
     </div>
 
     @if(session('success'))

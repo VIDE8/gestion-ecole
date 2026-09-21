@@ -18,11 +18,14 @@
         </thead>
         <tbody>
             @forelse($eleves as $i => $eleve)
-                @php $s = $stats[$eleve->id] ?? null; @endphp
-                <tr class="{{ ($s->nb_absences ?? 0) >= 5 ? 'table-danger' : '' }}">
+                @php
+                    $s = $stats[$eleve->id] ?? null;
+                    $nbAbs = $s->nb_absences ?? 0;
+                @endphp
+                <tr class="{{ $nbAbs >= 8 ? 'table-danger' : ($nbAbs >= 5 ? 'table-warning' : '') }}">
                     <td>{{ $i + 1 }}</td>
                     <td>{{ $eleve->nom }} {{ $eleve->prenom }}</td>
-                    <td class="text-center">{{ $s->nb_absences ?? 0 }}</td>
+                    <td class="text-center">{{ $nbAbs }}</td>
                     <td class="text-center">{{ $s->nb_retards ?? 0 }}</td>
                 </tr>
             @empty

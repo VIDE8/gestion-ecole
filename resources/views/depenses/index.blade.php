@@ -2,6 +2,22 @@
 
 @section('title', 'Dépenses')
 
+@section('head')
+<style>
+    .text-violet { color: #6f42c1 !important; }
+    .btn-violet {
+        background-color: #6f42c1;
+        border-color: #6f42c1;
+        color: #fff;
+    }
+    .btn-violet:hover {
+        background-color: #5a349e;
+        border-color: #5a349e;
+        color: #fff;
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="container" style="max-width: 800px;">
 
@@ -19,7 +35,7 @@
             <div class="card text-center shadow-sm">
                 <div class="card-body">
                     <p class="text-muted mb-1 small">Dépenses</p>
-                    <p class="fw-bold text-danger fs-5 mb-0">{{ number_format($totalDepenses, 0, ',', ' ') }} F CFA</p>
+                    <p class="fw-bold text-violet fs-5 mb-0">{{ number_format($totalDepenses, 0, ',', ' ') }} F CFA</p>
                 </div>
             </div>
         </div>
@@ -27,7 +43,7 @@
             <div class="card text-center shadow-sm">
                 <div class="card-body">
                     <p class="text-muted mb-1 small">Solde</p>
-                    <p class="fw-bold fs-5 mb-0 {{ $solde >= 0 ? 'text-success' : 'text-danger' }}">
+                    <p class="fw-bold fs-5 mb-0 {{ $solde >= 0 ? 'text-success' : 'text-violet' }}">
                         {{ number_format($solde, 0, ',', ' ') }} F CFA
                     </p>
                 </div>
@@ -42,7 +58,7 @@
     {{-- Formulaire d'enregistrement --}}
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <h2 class="text-danger fw-bold mb-4">Enregistrer une Dépense</h2>
+            <h2 class="text-violet fw-bold mb-4">Enregistrer une Dépense</h2>
 
             <form method="POST" action="{{ route('depenses.store') }}">
                 @csrf
@@ -78,7 +94,7 @@
                     @error('date_depense') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
 
-                <button type="submit" class="btn btn-danger w-100 fw-bold py-2">
+                <button type="submit" class="btn btn-violet w-100 fw-bold py-2">
                     Valider la dépense
                 </button>
             </form>
@@ -106,7 +122,7 @@
                             <tr>
                                 <td class="fw-semibold">{{ $depense->libelle }}</td>
                                 <td>{{ $depense->beneficiaire }}</td>
-                                <td class="text-danger fw-bold">
+                                <td class="text-violet fw-bold">
                                     {{ number_format($depense->montant, 0, ',', ' ') }} F CFA
                                 </td>
                                 <td>{{ \Carbon\Carbon::parse($depense->date_depense)->format('d/m/Y') }}</td>

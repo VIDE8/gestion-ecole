@@ -10,7 +10,7 @@
     <ul class="list-group">
         @forelse($classes as $classe)
             <li class="list-group-item">
-                <a href="{{ route('presences.statistiques', $classe) }}">{{ $classe->nom_classe }}</a>
+              <a href="{{ route('presences.statistiques', $classe) }}">{{ $classe->niveau }} — {{ $classe->nom_classe }}</a>
             </li>
         @empty
             <li class="list-group-item text-muted">Aucune classe enregistrée.</li>

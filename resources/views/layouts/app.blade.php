@@ -80,6 +80,9 @@
                                 <li class="nav-item me-3">
                                     <a class="nav-link fw-bold text-secondary" href="{{ route('trimestres.index') }}">Trimestres</a>
                                 </li>
+                                <li class="nav-item me-3">
+                                    <a class="nav-link fw-bold text-secondary" href="{{ route('presences.statistiques.index') }}">Statistiques de présence</a>
+                                </li>
                             @endif
 
                             @foreach($mesClasses as $classe)
@@ -88,6 +91,9 @@
                                 </li>
                                 <li class="nav-item me-3">
                                     <a class="nav-link fw-bold text-danger" href="{{ route('comportements.index', $classe) }}">Comportement</a>
+                                </li>
+                                <li class="nav-item me-3">
+                                    <a class="nav-link fw-bold text-secondary" href="{{ route('presences.statistiques', $classe) }}">Statistiques</a>
                                 </li>
                             @endforeach
 

@@ -1,0 +1,32 @@
+{
+  "name": "Portail de Gestion Scolaire - C.S. L'Avenir d'Or",
+  "short_name": "Avenir d'Or",
+  "description": "Portail de gestion scolaire de C.S. L'Avenir d'Or (Togo)",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1a252f",
+  "theme_color": "#006a4e",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

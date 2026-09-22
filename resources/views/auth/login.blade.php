@@ -11,8 +11,8 @@
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#006a4e">
-    <link rel="icon" href="/icons/icon-192.png" type="image/png">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="icon" href="/icon-192.png" type="image/png">
+    <link rel="apple-touch-icon" href="/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Avenir d'Or">
@@ -115,65 +115,4 @@
             background: linear-gradient(90deg, #006a4e 0%, #118161 100%);
             color: #ffc107;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 106, 78, 0.3);
-        }
-
-        .school-motto {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            color: #006a4e;
-            font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-        }
-    </style>
-</head>
-
-<body class="d-flex align-items-center justify-content-center vh-100">
-
-    <div class="card login-card" style="width: 100%; max-width: 450px;">
-        <div class="card-body p-5">
-
-            <div class="text-center mb-4">
-                <div class="badge-togo text-uppercase mb-3">Enseignement Primaire - Togo</div>
-                <h3 class="main-title mb-1">Portail de Gestion Scolaire</h3>
-                <div class="school-badge-stylized">C.S. L'Avenir d'Or</div>
-            </div>
-
-            @if ($errors->any())
-            <div class="alert alert-danger py-2.5 px-3 small border-0 shadow-sm rounded-3 d-flex align-items-center gap-2 mb-4" style="background-color: #fdf2f2; color: #d21034;">
-                <span>⚠️</span>
-                <div class="fw-medium">Identifiants invalides ou problème de connexion.</div>
-            </div>
-            @endif
-
-            <form action="{{ url('/login') }}" method="POST">
-                @csrf
-                <div class="mb-3">
-                    <label class="form-label form-label-custom text-uppercase">Email Professionnel</label>
-                    <input type="email" name="email" class="form-control form-control-custom" placeholder="votre email" value="{{ old('email') }}" required autofocus>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label form-label-custom text-uppercase">Mot de passe</label>
-                    <input type="password" name="password" class="form-control form-control-custom" placeholder="votre mot de passe" required>
-                </div>
-                <button type="submit" class="btn btn-submit-custom w-100 mt-2">Ouvrir la Session</button>
-            </form>
-
-            <div class="text-center mt-4 pt-2 border-top border-light">
-                <p class="school-motto mb-0">✨ Discipline - Travail - Succès ✨</p>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function () {
-                navigator.serviceWorker.register('/sw.js').catch(function () {});
-            });
-        }
-    </script>
-</body>
-
-</html>
+            box-shadow: 0 8px 20px rgba(0, 106, 78, 0.3)

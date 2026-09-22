@@ -1,9 +1,9 @@
 const CACHE_NAME = 'avenir-dor-shell-v1';
 const SHELL_ASSETS = [
   '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/icon-maskable-512.png',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/icon-maskable-512.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -26,8 +26,6 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Network-first for navigations and API calls (this app is dynamic/auth-based),
-// cache-first only for the static app-shell assets listed above.
 self.addEventListener('fetch', (event) => {
   const { request } = event;
 
@@ -45,9 +43,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Everything else (pages, /build assets, /api) goes to the network first
-  // so logged-in/dynamic content is never served stale; fall back to cache
-  // only if the network is unavailable and we happen to have it.
   event.respondWith(
     fetch(request).catch(() => caches.match(request))
   );

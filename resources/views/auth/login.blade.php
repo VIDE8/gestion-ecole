@@ -21,6 +21,10 @@
             font-family: 'Poppins', sans-serif;
             position: relative;
             background-color: #1a252f;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         body::before {
@@ -115,4 +119,87 @@
             background: linear-gradient(90deg, #006a4e 0%, #118161 100%);
             color: #ffc107;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 106, 78, 0.3)
+            box-shadow: 0 8px 20px rgba(0, 106, 78, 0.3);
+        }
+
+        .footer-motto {
+            color: #006a4e;
+            font-style: italic;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+                <div class="card login-card p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <span class="badge-togo mb-3">ENSEIGNEMENT PRIMAIRE - TOGO</span>
+                        <h1 class="main-title mt-3 mb-1">Portail de Gestion Scolaire</h1>
+                        <div class="school-badge-stylized">C.S. L'Avenir d'Or</div>
+                    </div>
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0 ps-3">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    @if (session('status'))
+                        <div class="alert alert-success">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label-custom">EMAIL PROFESSIONNEL</label>
+                            <input id="email" type="email" name="email"
+                                class="form-control form-control-custom @error('email') is-invalid @enderror"
+                                value="{{ old('email') }}" placeholder="votre email" required autofocus
+                                autocomplete="username">
+                            @error('email')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label-custom">MOT DE PASSE</label>
+                            <input id="password" type="password" name="password"
+                                class="form-control form-control-custom @error('password') is-invalid @enderror"
+                                placeholder="votre mot de passe" required autocomplete="current-password">
+                            @error('password')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                            <label class="form-check-label" for="remember">
+                                Se souvenir de moi
+                            </label>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-submit-custom">Ouvrir la Session</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4 footer-motto">
+                        ✨ Discipline - Travail - Succès ✨
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

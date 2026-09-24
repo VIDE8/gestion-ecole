@@ -8,17 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('notes', function (Blueprint $table) {
-            $table->id();
-            $table->decimal('valeur', 4, 2);
-            $table->string('matiere');
-            $table->foreignId('eleve_id')->constrained('eleves')->onDelete('cascade');
-            $table->timestamps();
+        Schema::table('notes', function (Blueprint $table) {
+            $table->enum('type_evaluation', ['devoir', 'composition'])
+                  ->default('devoir')
+                  ->after('matiere');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('notes');
+        Schema::table('notes', function (Blueprint $table) {
+            $table->dropColumn('type_evaluation');
+        });
     }
 };

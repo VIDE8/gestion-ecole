@@ -37,10 +37,14 @@ class NoteController extends Controller
             });
         }
 
-        $notes = $query->get();
+        $notes = $query->orderByDesc('created_at')->get();
         $eleves = $eleveQuery->get();
 
-        return view('notes.index', compact('notes', 'eleves'));
+        // Regroupe les notes par élève pour un affichage compact (une ligne = un élève)
+        $notesParEleve = $notes->groupBy('eleve_id');
+
+        return view('notes.index', compact('notesParEleve', 'eleves'))
+            ->with('totalNotes', $notes->count());
     }
 
     public function store(Request $request)
@@ -48,6 +52,7 @@ class NoteController extends Controller
         $validated = $request->validate([
             'valeur' => 'required|numeric|min:0|max:20',
             'matiere' => 'required|string',
+            'type_evaluation' => 'required|in:devoir,composition',
             'eleve_id' => 'required|exists:eleves,id',
         ]);
 
@@ -73,11 +78,10 @@ class NoteController extends Controller
 
         $request->validate([
             'valeur' => 'required|numeric|min:0|max:20',
+            'type_evaluation' => 'sometimes|in:devoir,composition',
         ]);
 
-        $note->update([
-            'valeur' => $request->valeur,
-        ]);
+        $note->update($request->only(['valeur', 'type_evaluation']));
 
         return redirect()->route('notes.index')->with('success', 'La note a été modifiée avec succès !');
     }

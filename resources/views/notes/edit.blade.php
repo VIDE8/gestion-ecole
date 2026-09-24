@@ -29,6 +29,14 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label small fw-bold">Type d'évaluation</label>
+                    <select name="type_evaluation" class="form-select" required>
+                        <option value="devoir" {{ $note->type_evaluation === 'devoir' ? 'selected' : '' }}>Devoir</option>
+                        <option value="composition" {{ $note->type_evaluation === 'composition' ? 'selected' : '' }}>Composition</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label small fw-bold">Note sur 20</label>
                     <input type="number" name="valeur" class="form-control" value="{{ $note->valeur }}" min="0" max="20" step="0.01" required placeholder="ex: 14.5" autofocus>
                 </div>

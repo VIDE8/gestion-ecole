@@ -9,7 +9,7 @@ class Note extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['valeur', 'matiere', 'eleve_id', 'trimestre_id'];
+    protected $fillable = ['valeur', 'matiere', 'type_evaluation', 'eleve_id', 'trimestre_id'];
 
     public function eleve()
     {

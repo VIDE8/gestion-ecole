@@ -51,6 +51,13 @@
                             </select>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label small fw-bold">Type d'évaluation</label>
+                            <select name="type_evaluation" class="form-select" required>
+                                <option value="devoir">Devoir</option>
+                                <option value="composition">Composition</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label small fw-bold">Note (sur 20)</label>
                             <input type="number" step="0.25" name="valeur" class="form-control" placeholder="ex: 14.5" min="0" max="20" required>
                         </div>
@@ -63,53 +70,91 @@
         <div class="col-md-8">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <h5 class="card-title fw-bold mb-3">Bulletins des Notes ({{ count($notes) }})</h5>
-                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                    <h5 class="card-title fw-bold mb-3">Bulletins des Notes ({{ $totalNotes }})</h5>
+                    <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
                         <table class="table table-hover align-middle">
                             <thead class="table-light sticky-top">
                                 <tr>
                                     <th>Élève</th>
                                     <th>Classe</th>
-                                    <th>Matière</th>
-                                    <th>Note / 20</th>
-                                    <th>Appréciation</th>
-                                    <th class="text-end">Actions</th>
+                                    <th>Notes enregistrées</th>
+                                    <th>Moyenne</th>
+                                    <th class="text-end">Détail</th>
                                 </tr>
                             </thead>
-
                             <tbody>
-                                @forelse($notes as $note)
+                                @forelse($notesParEleve as $eleveId => $notesEleve)
+                                @php
+                                    $eleve = $notesEleve->first()->eleve;
+                                    $moyenne = $notesEleve->avg('valeur');
+                                    $collapseId = 'eleve-' . $eleveId;
+                                @endphp
                                 <tr>
-                                    <td class="fw-bold text-uppercase">{{ $note->eleve->nom }} <span class="text-capitalize fw-normal">{{ $note->eleve->prenom }}</span> <br> <small class="text-muted">{{ $note->eleve->matricule }}</small></td>
-                                    <td><span class="badge bg-secondary text-white px-2 py-1">{{ $note->eleve->classe->niveau ?? 'N/A' }}</span></td>
-                                    <td>{{ $note->matiere }}</td>
-                                    <td class="fw-bold {{ $note->valeur >= 10 ? 'text-success' : 'text-danger' }}">{{ number_format($note->valeur, 2, ',', ' ') }} / 20</td>
-                                    <td>
-                                        @if($note->valeur >= 16)
-                                        <span class="text-success small fw-bold">Très Bien</span>
-                                        @elseif($note->valeur >= 14)
-                                        <span class="text-success small fw-bold">Bien</span>
-                                        @elseif($note->valeur >= 12)
-                                        <span class="text-info small fw-bold">Assez Bien</span>
-                                        @elseif($note->valeur >= 10)
-                                        <span class="text-warning small fw-bold">Passable</span>
-                                        @else
-                                        <span class="text-danger small fw-bold">Insuffisant</span>
-                                        @endif
+                                    <td class="fw-bold text-uppercase">
+                                        {{ $eleve->nom }} <span class="text-capitalize fw-normal">{{ $eleve->prenom }}</span>
+                                        <br><small class="text-muted">{{ $eleve->matricule }}</small>
                                     </td>
+                                    <td><span class="badge bg-secondary text-white px-2 py-1">{{ $eleve->classe->niveau ?? 'N/A' }}</span></td>
+                                    <td>{{ $notesEleve->count() }} note(s)</td>
+                                    <td class="fw-bold {{ $moyenne >= 10 ? 'text-success' : 'text-danger' }}">{{ number_format($moyenne, 2, ',', ' ') }} / 20</td>
                                     <td class="text-end">
-                                        <a href="{{ route('notes.edit', $note->id) }}" class="btn btn-sm btn-warning fw-bold px-3">
-                                            Modifier
-                                        </a>
+                                        <button class="btn btn-sm btn-outline-warning fw-bold px-3" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $collapseId }}">
+                                            Voir tout
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="collapse" id="{{ $collapseId }}">
+                                    <td colspan="5" class="p-0 border-0">
+                                        <div class="p-3 bg-light">
+                                            <table class="table table-sm table-borderless mb-0">
+                                                <thead>
+                                                    <tr class="small text-muted">
+                                                        <th>Matière</th>
+                                                        <th>Type</th>
+                                                        <th>Note / 20</th>
+                                                        <th>Appréciation</th>
+                                                        <th class="text-end">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($notesEleve as $note)
+                                                    <tr>
+                                                        <td>{{ $note->matiere }}</td>
+                                                        <td>
+                                                            <span class="badge {{ $note->type_evaluation === 'composition' ? 'bg-danger' : 'bg-info text-dark' }}">
+                                                                {{ ucfirst($note->type_evaluation) }}
+                                                            </span>
+                                                        </td>
+                                                        <td class="fw-bold {{ $note->valeur >= 10 ? 'text-success' : 'text-danger' }}">{{ number_format($note->valeur, 2, ',', ' ') }} / 20</td>
+                                                        <td>
+                                                            @if($note->valeur >= 16)
+                                                            <span class="text-success small fw-bold">Très Bien</span>
+                                                            @elseif($note->valeur >= 14)
+                                                            <span class="text-success small fw-bold">Bien</span>
+                                                            @elseif($note->valeur >= 12)
+                                                            <span class="text-info small fw-bold">Assez Bien</span>
+                                                            @elseif($note->valeur >= 10)
+                                                            <span class="text-warning small fw-bold">Passable</span>
+                                                            @else
+                                                            <span class="text-danger small fw-bold">Insuffisant</span>
+                                                            @endif
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <a href="{{ route('notes.edit', $note->id) }}" class="btn btn-sm btn-warning fw-bold px-3">Modifier</a>
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted small py-4">Aucune note ne correspond à votre recherche.</td>
+                                    <td colspan="5" class="text-center text-muted small py-4">Aucune note ne correspond à votre recherche.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
-
                         </table>
                     </div>
                 </div>

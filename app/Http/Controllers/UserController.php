@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
     public const ROLES = [
-        'enseignant' => 'Professeur',
+        'enseignant' => 'Enseignant',
         'comptable' => 'Comptable',
         'admin' => 'Directeur (admin)',
     ];

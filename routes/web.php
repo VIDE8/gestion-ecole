@@ -11,6 +11,8 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\EleveApiController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\ComportementController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ScolariteController;
 use App\Models\Classe;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -51,6 +53,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/annees-scolaires', [AnneeScolaireController::class, 'index'])->name('annees_scolaires.index');
         Route::post('/annees-scolaires', [AnneeScolaireController::class, 'store'])->name('annees_scolaires.store');
         Route::post('/annees-scolaires/{id}/activer', [AnneeScolaireController::class, 'activer'])->name('annees_scolaires.activer');
+
+        Route::get('/scolarite', [ScolariteController::class, 'index'])->name('scolarite.index');
+        Route::put('/scolarite', [ScolariteController::class, 'update'])->name('scolarite.update');
+
+        Route::get('/utilisateurs', [UserController::class, 'index'])->name('users.index');
+        Route::post('/utilisateurs', [UserController::class, 'store'])->name('users.store');
+        Route::put('/utilisateurs/{user}/mot-de-passe', [UserController::class, 'resetPassword'])->name('users.password');
+        Route::delete('/utilisateurs/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
         Route::get('/trimestres', [TrimestreController::class, 'index'])->name('trimestres.index');
         Route::post('/trimestres', [TrimestreController::class, 'store'])->name('trimestres.store');

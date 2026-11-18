@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html lang="fr">
+@extends('layouts.app')
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Modifier la Note</title>
-    @vite(['resources/sass/app.scss'])
-</head>
+@section('title', 'Modifier la Note')
 
-<body class="bg-light" style="padding-top: 50px;">
-    <div class="container" style="max-width: 500px;">
+@section('content')
+<div class="container" style="max-width: 500px;">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-warning text-dark fw-bold text-center fs-5">
                 Modifier la Note
@@ -48,6 +42,4 @@
             </form>
         </div>
     </div>
-</body>
-
-</html>
+@endsection

@@ -23,6 +23,7 @@
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Niveau (Primaire Togo)</label>
                             <select name="niveau" class="form-select" required>
+                                <option value="CEI">Cours d'Éveil et d'Initiation – Maternelle (CEI)</option>
                                 <option value="CP1">Cours Préparatoire 1ère année (CP1)</option>
                                 <option value="CP2">Cours Préparatoire 2ème année (CP2)</option>
                                 <option value="CE1">Cours Élémentaire 1ère année (CE1)</option>

@@ -1,52 +1,9 @@
-<!DOCTYPE html>
-<html lang="fr">
+@extends('layouts.app')
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Années Scolaires</title>
-    <link href="https://googleapis.com" rel="stylesheet">
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-</head>
+@section('title', 'Années Scolaires')
 
-<body class="bg-light" style="padding-top: 85px;">
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm px-3 fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold fs-3" href="#" style="font-family: 'Playfair Display', serif; color: #ffc107; letter-spacing: 1px;">
-                🏫 C.S. L'AVENIR D'OR
-            </a>
-
-            <div class="collapse navbar-collapse d-flex justify-content-between">
-                <div class="navbar-nav flex-row align-items-center">
-                    @if(auth()->user()->role === 'admin')
-                    <a class="nav-link {{ Request::is('/') ? 'active text-success' : '' }} fw-bold me-3" href="{{ url('/') }}">Gestion des Classes</a>
-                    <a class="nav-link {{ Request::is('annees-scolaires') ? 'active text-info' : '' }} fw-bold me-3" href="{{ url('/annees-scolaires') }}">Années Scolaires</a>
-                    <a class="nav-link {{ Request::is('trimestres') ? 'active text-info' : '' }} fw-bold me-3" href="{{ url('/trimestres') }}">Trimestres</a>
-                    @endif
-
-                    @if(in_array(auth()->user()->role, ['admin', 'comptable']))
-                    <a class="nav-link {{ Request::is('eleves') ? 'active text-primary' : '' }} fw-bold me-3" href="{{ url('/eleves') }}">Registre des Élèves</a>
-                    <a class="nav-link {{ Request::is('paiements') ? 'active text-danger' : '' }} fw-bold me-3" href="{{ url('/paiements') }}">Comptabilité / Paiements</a>
-                    @endif
-
-                    @if(in_array(auth()->user()->role, ['admin', 'enseignant']))
-                    <a class="nav-link {{ Request::is('notes') ? 'active text-warning' : '' }} fw-bold me-3" href="{{ url('/notes') }}">Saisie des Notes</a>
-                    @endif
-                </div>
-
-                <div class="navbar-nav align-items-center flex-row">
-                    <span class="text-white-50 small me-3 fw-bold">{{ auth()->user()->name }} ({{ strtoupper(auth()->user()->role) }})</span>
-                    <form action="{{ route('logout') }}" method="POST" class="d-inline m-0">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-outline-light fw-bold">Déconnexion</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container my-4">
+@section('content')
+<div class="container my-4">
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm border-0">
@@ -141,8 +98,4 @@
             </div>
         </div>
     </div>
-
-</body>
-
-</html>
-                        
+@endsection

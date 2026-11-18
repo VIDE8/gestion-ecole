@@ -45,7 +45,15 @@
             }
         @endphp
 
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm py-3 mb-4">
+        @php
+            $authUser = auth()->user();
+            $isAdmin = $authUser && $authUser->hasRole('admin');
+            $isComptable = $authUser && $authUser->hasRole('comptable');
+            $isEnseignant = $authUser && $authUser->hasRole('enseignant');
+            $roleLabels = ['admin' => 'Directeur', 'comptable' => 'Comptable', 'enseignant' => 'Enseignant'];
+        @endphp
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 mb-4">
             <div class="container">
                 <a class="navbar-brand fw-bold text-success" href="{{ url('/') }}">
                     🏫 École Primaire
@@ -57,71 +65,86 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         @auth
-                            @if(auth()->user()->hasRole('admin'))
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-success" href="{{ route('home') }}">Gestion des Classes</a>
+                            @if($isAdmin)
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold {{ request()->routeIs('home', 'classes.*') ? 'text-success' : '' }}" href="{{ route('home') }}">Gestion des Classes</a>
                                 </li>
                             @endif
 
-                            @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('comptable'))
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-primary" href="{{ route('eleves.index') }}">Registre des Élèves</a>
+                            @if($isAdmin || $isComptable)
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold {{ request()->routeIs('eleves.*') ? 'text-primary' : '' }}" href="{{ route('eleves.index') }}">Registre des Élèves</a>
                                 </li>
                             @endif
 
-                            @if(auth()->user()->hasRole('comptable'))
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-danger" href="{{ route('paiements.index') }}">Comptabilité / Paiements</a>
+                            @if($isAdmin)
+                                {{-- Scolarité : année, trimestres et frais de scolarité --}}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle fw-bold {{ request()->routeIs('annees_scolaires.*', 'trimestres.*', 'scolarite.*') ? 'text-success' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Scolarité</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="{{ route('annees_scolaires.index') }}">Années scolaires</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('trimestres.index') }}">Trimestres</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="{{ route('scolarite.index') }}">Frais de scolarité</a></li>
+                                    </ul>
                                 </li>
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-violet" href="{{ route('depenses.index') }}">Dépenses</a>
+
+                                {{-- Vie scolaire : comportement et présences --}}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle fw-bold {{ request()->routeIs('comportements.*', 'presences.*') ? 'text-success' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Vie scolaire</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="{{ route('comportements.index_global') }}">Comportement</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('presences.statistiques.index') }}">Statistiques de présence</a></li>
+                                    </ul>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold {{ request()->routeIs('users.*') ? 'text-success' : '' }}" href="{{ route('users.index') }}">Utilisateurs</a>
                                 </li>
                             @endif
 
-                            @if(auth()->user()->hasRole('enseignant'))
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-info" href="{{ route('notes.index') }}">Notes</a>
+                            @if($isComptable)
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold {{ request()->routeIs('paiements.*') ? 'text-danger' : '' }}" href="{{ route('paiements.index') }}">Comptabilité / Paiements</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold {{ request()->routeIs('depenses.*') ? 'text-violet' : '' }}" href="{{ route('depenses.index') }}">Dépenses</a>
                                 </li>
                             @endif
 
-                            @if(auth()->user()->hasRole('admin'))
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-danger" href="{{ route('comportements.index_global') }}">Comportement</a>
+                            @if($isEnseignant)
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold {{ request()->routeIs('notes.*') ? 'text-info' : '' }}" href="{{ route('notes.index') }}">Notes</a>
                                 </li>
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-secondary" href="{{ route('annees_scolaires.index') }}">Années Scolaires</a>
-                                </li>
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-secondary" href="{{ route('trimestres.index') }}">Trimestres</a>
-                                </li>
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-secondary" href="{{ route('presences.statistiques.index') }}">Statistiques de présence</a>
-                                </li>
+
+                                @if($mesClasses->isNotEmpty())
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle fw-bold {{ request()->routeIs('comportements.*', 'presences.*') ? 'text-success' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Vie scolaire</a>
+                                        <ul class="dropdown-menu">
+                                            @foreach($mesClasses as $classe)
+                                                @if($mesClasses->count() > 1)
+                                                    <li><h6 class="dropdown-header">{{ $classe->niveau }} — {{ $classe->nom_classe }}</h6></li>
+                                                @endif
+                                                <li><a class="dropdown-item" href="{{ route('presences.appel', $classe) }}">Appel</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('comportements.index', $classe) }}">Comportement</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('presences.statistiques', $classe) }}">Statistiques</a></li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
+                                @endif
                             @endif
-
-                            @foreach($mesClasses as $classe)
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-warning" href="{{ route('presences.appel', $classe) }}">Appel</a>
-                                </li>
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-danger" href="{{ route('comportements.index', $classe) }}">Comportement</a>
-                                </li>
-                                <li class="nav-item me-3">
-                                    <a class="nav-link fw-bold text-secondary" href="{{ route('presences.statistiques', $classe) }}">Statistiques</a>
-                                </li>
-                            @endforeach
-
-                            <li class="nav-item me-3">
-                                <span class="nav-link text-muted small">{{ auth()->user()->name }} ({{ strtoupper(auth()->user()->role) }})</span>
-                            </li>
-                            <li class="nav-item">
-                                <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Déconnexion</button>
-                                </form>
-                            </li>
                         @endauth
                     </ul>
+
+                    @auth
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted small">{{ $authUser->name }} <span class="badge bg-secondary">{{ $roleLabels[$authUser->role] ?? strtoupper($authUser->role) }}</span></span>
+                            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">Déconnexion</button>
+                            </form>
+                        </div>
+                    @endauth
                 </div>
             </div>
         </nav>

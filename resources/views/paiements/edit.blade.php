@@ -1,4 +1,18 @@
-<div class="mb-3">
+@extends('layouts.app')
+
+@section('title', 'Modifier le paiement')
+
+@section('content')
+<div class="container" style="max-width: 500px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-warning text-dark fw-bold text-center fs-5">
+            Modifier le paiement
+        </div>
+        <form action="{{ route('paiements.update', $paiement->id) }}" method="POST" class="card-body">
+            @csrf
+            @method('PUT')
+
+            <div class="mb-3">
                 <label class="form-label small fw-bold text-secondary">Élève</label>
                 <input type="text" class="form-control bg-light text-uppercase fw-bold" value="{{ $paiement->eleve->nom }} {{ $paiement->eleve->prenom }}" readonly>
             </div>
@@ -28,3 +42,4 @@
         </form>
     </div>
 </div>
+@endsection

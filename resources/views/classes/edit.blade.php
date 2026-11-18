@@ -20,7 +20,7 @@
             <div class="mb-3">
                 <label class="form-label small fw-bold">Niveau (Primaire Togo)</label>
                 <select name="niveau" class="form-select" required>
-                    @foreach(['CP1', 'CP2', 'CE1', 'CE2', 'CM1', 'CM2'] as $niveau)
+                    @foreach(['CEI', 'CP1', 'CP2', 'CE1', 'CE2', 'CM1', 'CM2'] as $niveau)
                     <option value="{{ $niveau }}" {{ $classe->niveau === $niveau ? 'selected' : '' }}>{{ $niveau }}</option>
                     @endforeach
                 </select>
